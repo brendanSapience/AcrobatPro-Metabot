@@ -6,3 +6,10 @@ C:\Users\Siddhant Sahu\source\repos\AdobeUtilities\bin\Debug\Interop.Acrobat.dll
 C:\Users\Siddhant Sahu\source\repos\AdobeUtilities\obj\Debug\AdobeUtilities.csproj.CopyComplete
 C:\Users\Siddhant Sahu\source\repos\AdobeUtilities\obj\Debug\AdobeUtilities.dll
 C:\Users\Siddhant Sahu\source\repos\AdobeUtilities\obj\Debug\AdobeUtilities.pdb
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\bin\Debug\AdobeUtilities.dll
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\bin\Debug\AdobeUtilities.pdb
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.csprojAssemblyReference.cache
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.csproj.CoreCompileInputs.cache
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.csproj.CopyComplete
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.dll
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.pdb

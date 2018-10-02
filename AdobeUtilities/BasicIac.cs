@@ -1,15 +1,4 @@
-﻿/*ADOBE SYSTEMS INCORPORATED
- Copyright (C) 1994-2006 Adobe Systems Incorporated
-All rights reserved.
-
- NOTICE: Adobe permits you to use, modify, and distribute this file
- in accordance with the terms of the Adobe license agreement
- accompanying it.
-------------------------------------------------------------
-
-BasicIacCS
-- This is a simple Acrobat IAC C# code to perform certain functions.
-'------------------------------------------------------------*/
+﻿
 using System;
 using System.Drawing;
 using System.Collections;
@@ -75,14 +64,16 @@ namespace AutomationAnywhere
                     iNum = 0;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 iNum = 0;
+                Console.Write("Error, Could not open File: "+ szPdfPathConst);
+                Console.Write("\nMessage: " + e.Message);
             }
             return iNum;
         }
 
-        //Function to Check if Word is present or not.
+        // Function to Check if Word is present or not, returns true or false
         public bool IsWordPresent(string szPdfPathConst, string searchword)
         {
             //variables
@@ -127,7 +118,8 @@ namespace AutomationAnywhere
         }
 
 
-        //////////////////////////Function to Find Text and Obtain Corresponding Pages///////////////////
+        // Returns the list of page numbers on which the word or words can be found (separated by commas, ex: 7,8,9,10)
+        // bCaseSensitive: 0 = false, 1 = true, bWholeWordsOnly: 0 = false, 1 = true
         public string GetPageNumforWord(string szPdfPathConst, string searchword, int bCaseSensitive, int bWholeWordsOnly)
         {
             //Initializing variables
@@ -251,7 +243,7 @@ namespace AutomationAnywhere
             return PageNumConsol;
         }
 
-        ////////////////////////////////SAVING PDF/////////////////////////////////////////////
+        // Saving PDF file
         public bool SavePDF(string szPdfPathConst, string sFullPath)
         {
             //Declaring Variables
@@ -288,10 +280,7 @@ namespace AutomationAnywhere
 
         }
 
-        /// <summary>
-        /// //////////////////////CLOSING PDF/////////////////////////////////////////
-        /// </summary>
-
+        // Closing PDF File
         public bool ClosePDFNoChanges(string szPdfPathConst)
         {
             //Initializing Variables
