@@ -75,26 +75,37 @@ namespace AutomationAnywhere
         }
 
         // test
-        public void OCRDocumentAndSave(String szPdfPathConst)
+        public Boolean OCRDocumentAndSave(String szPdfPathConst)
         {
-            CAcroPDDoc pdDoc;
             CAcroAVDoc avDoc;
             CAcroApp avApp;
-            //set AVApp Project
-            avApp = new AcroAppClass();
 
-            //set AVDoc object
+            avApp = new AcroAppClass();
             avDoc = new AcroAVDocClass();
+            avApp.Show();
 
             //open the PDF
             if (avDoc.Open(szPdfPathConst, ""))
             {
                 //set the pdDoc object and get some data
-                pdDoc = (CAcroPDDoc)avDoc.GetPDDoc();
-
+                CAcroPDDoc pdDoc = (CAcroPDDoc)avDoc.GetPDDoc();
+                try
+                {
+                    avApp.MenuItemExecute("TouchUp:EditDocument");
+                    //System.Threading.Thread.Sleep(1000);
+                    avApp.MenuItemExecute("Save");
+                }catch (Exception e)
+                {
+                    return false;
+                }
+                avApp.CloseAllDocs();
+                avApp.Exit();
+                
+                return true;
+                
             }
-            avApp.MenuItemExecute("TouchUp:EditDocument");
-            avApp.MenuItemExecute("Save");
+            avApp.Exit();
+            return false;
 
         }
 
@@ -186,8 +197,17 @@ namespace AutomationAnywhere
                 }
             }
             List<int> PagesWithFooterWords = DeDuplicateArray(PageListFooter);
-            int MinimumFooterRange = PagesWithFooterWords.Min();
-            int MinimumHeaderRange = PagesWithHeaderWords.Min();
+            int MinimumFooterRange = 0;
+            int MinimumHeaderRange = 0;
+            if (PagesWithFooterWords.Count == 0 || PagesWithHeaderWords.Count == 0)
+            {
+                return "No Range Found";
+            }
+
+                MinimumFooterRange = PagesWithFooterWords.Min();
+                MinimumHeaderRange = PagesWithFooterWords.Min();
+            
+
 
             int HeaderFinalPageNumber = MinimumHeaderRange + 1;
             int FooterFinalPageNumber = MinimumFooterRange + 1;
