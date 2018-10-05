@@ -13,3 +13,5 @@ C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\De
 C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.csproj.CopyComplete
 C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.dll
 C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\obj\Debug\AdobeUtilities.pdb
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\bin\Debug\Tesseract.dll
+C:\Users\brendan.sapience\Documents\git\AcrobatPro-Metabot\AdobeUtilities\bin\Debug\Tesseract.xml

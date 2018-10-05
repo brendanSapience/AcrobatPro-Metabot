@@ -1,11 +1,13 @@
 ﻿
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Data;
 using Acrobat;
+using System.Reflection;
+using System.Threading;
+using System.Linq;
 
 namespace AutomationAnywhere
 {
@@ -30,7 +32,6 @@ namespace AutomationAnywhere
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        
 
         //Function to open the PDF and get the number of pages
         public int StartAcrobatIac(String szPdfPathConst)
@@ -71,6 +72,30 @@ namespace AutomationAnywhere
                 Console.Write("\nMessage: " + e.Message);
             }
             return iNum;
+        }
+
+        // test
+        public void OCRDocumentAndSave(String szPdfPathConst)
+        {
+            CAcroPDDoc pdDoc;
+            CAcroAVDoc avDoc;
+            CAcroApp avApp;
+            //set AVApp Project
+            avApp = new AcroAppClass();
+
+            //set AVDoc object
+            avDoc = new AcroAVDocClass();
+
+            //open the PDF
+            if (avDoc.Open(szPdfPathConst, ""))
+            {
+                //set the pdDoc object and get some data
+                pdDoc = (CAcroPDDoc)avDoc.GetPDDoc();
+
+            }
+            avApp.MenuItemExecute("TouchUp:EditDocument");
+            avApp.MenuItemExecute("Save");
+
         }
 
         // Function to Check if Word is present or not, returns true or false
@@ -117,10 +142,71 @@ namespace AutomationAnywhere
             return TextCheck;
         }
 
+        public String getPageRangeBetweenStrings(String szPdfPathConst, String HeaderStr, String FooterStr, Boolean includeFirstPageInRange, Boolean includeLastPageInRange)
+        {
+            CAcroApp avApp;
+            CAcroAVDoc avDoc;
+            CAcroAVPageView avPage;
+            avApp = new AcroAppClass();
+            avDoc = new AcroAVDocClass();
+            avDoc.Open(szPdfPathConst, "");
+            CAcroPDDoc pdDoc = (CAcroPDDoc)avDoc.GetPDDoc();
+            List<int> PageListHeader = new List<int>();
+            List<int> PageListFooter = new List<int>();
+            //AcroPDDoc pdDoc = getPDDoc(szPdfPathConst);
+            int TotalNumberOfPages = pdDoc.GetNumPages();
+            AcroPDPage page;
+            //set AVPage View object
+            avPage = (CAcroAVPageView)avDoc.GetAVPageView();
+            avApp.Show();
+            for (int i = 0; i < TotalNumberOfPages; i++)
+            {
+                page = (AcroPDPage)pdDoc.AcquirePage(i);
+                Boolean TextCheck = avDoc.FindText(HeaderStr,1,1,0);
+                if (TextCheck == true)
+                {
+                    int PageNum = avPage.GetPageNum();
+                    PageListHeader.Add(PageNum);
+                }
+            }
+          
+            
+            List<int> PagesWithHeaderWords = DeDuplicateArray(PageListHeader);
 
-        // Returns the list of page numbers on which the word or words can be found (separated by commas, ex: 7,8,9,10)
-        // bCaseSensitive: 0 = false, 1 = true, bWholeWordsOnly: 0 = false, 1 = true
-        public string GetPageNumforWord(string szPdfPathConst, string searchword, int bCaseSensitive, int bWholeWordsOnly)
+            
+
+            for (int i = 0; i < TotalNumberOfPages; i++)
+            {
+                page = (AcroPDPage)pdDoc.AcquirePage(i);
+                Boolean TextCheck = avDoc.FindText(FooterStr,1,1,0);
+                if (TextCheck == true)
+                {
+                    int PageNum = avPage.GetPageNum();
+                    PageListFooter.Add(PageNum);
+                }
+            }
+            List<int> PagesWithFooterWords = DeDuplicateArray(PageListFooter);
+            int MinimumFooterRange = PagesWithFooterWords.Min();
+            int MinimumHeaderRange = PagesWithHeaderWords.Min();
+
+            int HeaderFinalPageNumber = MinimumHeaderRange + 1;
+            int FooterFinalPageNumber = MinimumFooterRange + 1;
+
+            if (!includeFirstPageInRange)
+            {
+                HeaderFinalPageNumber++;
+            }
+            if (!includeLastPageInRange)
+            {
+                FooterFinalPageNumber--;
+            }
+
+            return HeaderFinalPageNumber+"-"+ FooterFinalPageNumber;
+        }
+
+            // Returns the list of page numbers on which the word or words can be found (separated by commas, ex: 7,8,9,10)
+            // bCaseSensitive: 0 = false, 1 = true, bWholeWordsOnly: 0 = false, 1 = true
+            public string GetPageNumforWord(string szPdfPathConst, string searchword, int bCaseSensitive, int bWholeWordsOnly)
         {
             //Initializing variables
             int iNum = 0;
@@ -243,6 +329,20 @@ namespace AutomationAnywhere
             return PageNumConsol;
         }
 
+        private List<int> DeDuplicateArray(List<int> list)
+        {
+            //Removing Duplicates in the list due to multiple occurences of word on the same page
+            List<int> PageListFilter = new List<int>();
+            foreach (int i in list)
+            {
+                if (!PageListFilter.Contains(i))
+                {
+                    PageListFilter.Add(i);
+                }
+            }
+            return PageListFilter;
+        }
+
         // Saving PDF file
         public bool SavePDF(string szPdfPathConst, string sFullPath)
         {
@@ -318,5 +418,69 @@ namespace AutomationAnywhere
             return CloseCheck;
 
         }
+
+
+
+        public string getTextFromPdf(String szPdfPathConst)
+        {
+            AcroPDDoc pddoc = getPDDoc(szPdfPathConst);
+            String myText = GetTextInPdf(pddoc);
+            return myText;
+        }
+
+        private AcroPDDoc getPDDoc(String szPdfPathConst)
+        {
+            //Declaring relevant IAC objects
+            AcroPDDoc pdDoc;
+            CAcroAVDoc avDoc;
+            CAcroApp avApp;
+            avApp = new AcroAppClass();
+            avDoc = new AcroAVDocClass();
+            if (avDoc.Open(szPdfPathConst, ""))
+            {
+                pdDoc = (AcroPDDoc)avDoc.GetPDDoc();
+                return pdDoc;
+            }
+            return null;
+        }
+
+        private string GetTextInPdf(AcroPDDoc pdDoc)
+        {
+            AcroPDPage page;
+            int TotalNumberOfPages = pdDoc.GetNumPages();
+            string pageText = "";
+            for (int i = 0; i < TotalNumberOfPages; i++)
+            {
+                page = (AcroPDPage)pdDoc.AcquirePage(i);
+                object jso, jsNumWords, jsWord;
+                List<string> words = new List<string>();
+                try
+                {
+                    jso = pdDoc.GetJSObject();
+                    if (jso != null)
+                    {
+                        object[] args = new object[] { i };
+                        jsNumWords = jso.GetType().InvokeMember("getPageNumWords", BindingFlags.InvokeMethod, null, jso, args, null);
+                        int numWords = Int32.Parse(jsNumWords.ToString());
+                        for (int j = 0; j <= numWords; j++)
+                        {
+                            object[] argsj = new object[] { i, j, false };
+                            jsWord = jso.GetType().InvokeMember("getPageNthWord", BindingFlags.InvokeMethod, null, jso, argsj, null);
+                            words.Add((string)jsWord);
+                        }
+                    }
+                    foreach (string word in words)
+                    {
+                        pageText += word;
+                    }
+                }
+                catch
+                {
+                }
+            }
+            return pageText;
+        }
     }
+
+
 }

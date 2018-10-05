@@ -11,12 +11,23 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
+            String PDFFilePath = @"C:\Users\brendan.sapience\Google Drive\AutomationAnywhere\Customers\GSK\Aesica\2017IN000000957.pdf";
             BasicIac bi = new BasicIac();
-            int PageNumber = bi.StartAcrobatIac("C:\\Users\\brendan.sapience\\Google Drive\\AutomationAnywhere\\Customers\\hess\\Document Samples\\0057_486301224 June-2018.pdf");
-            Console.Write("Debug:" + PageNumber);
+            //int PageNumber = bi.StartAcrobatIac(PDFFilePath);
+            //Console.Write("Debug:" + PageNumber);
 
-            String PnForWord = bi.GetPageNumforWord("C:\\Users\\brendan.sapience\\Google Drive\\AutomationAnywhere\\Customers\\hess\\Document Samples\\0057_486301224 June-2018.pdf","ELECTRONIC WITHDRAWALS",1,1);
-            Console.Write("Debug:" + PnForWord);
+            //String PnForWord = bi.GetPageNumforWord(PDFFilePath, "manufacturing",0,1);
+            //Console.Write("Debug:" + PnForWord);
+
+            //  String something = bi.getTextFromPdf(PDFFilePath);
+            //  Console.Write("Debug:" + something);
+
+            //String Range = bi.getPageRangeBetweenStrings(PDFFilePath,  "ELECTRONIC WITHDRAWALS","OTHER WITHDRAWALS, FEES & CHARGES", true, false);
+            //Console.Write("Range Found:" + Range);
+
+            bi.OCRDocumentAndSave(PDFFilePath);
+            Console.Write("Debug: Done");
+
             Console.ReadKey();
         }
     }
